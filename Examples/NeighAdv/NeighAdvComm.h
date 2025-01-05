@@ -42,4 +42,5 @@ namespace pcpp
   IPAddress getSourceIPAddr(const PcapLiveDevice* dev, IPAddress sourceIP);
   void NeighAdvSetDefaultValues(const PcapLiveDevice* dev, NeighAdvProtoConfParams& params);
   void NeighAdvTranslateNAFlags(const std::string& naFlagsStr, NeighAdvNAFlags& naFlags);
+  std::string&  getDevIPAddrStr(std::string& ipAddrStr, const PcapLiveDevice* dev);
 }

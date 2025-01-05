@@ -33,6 +33,48 @@ namespace pcpp
 		return sourceMac;
 	}
 
+	std::string& getDevIPAddrStr(std::string& ipAddrStr, const PcapLiveDevice* dev)
+	{
+		const std::vector<IPAddress> ipAddr =  dev->getIPAddresses();
+		if (ipAddr.empty())
+		{
+			return ipAddrStr;
+		}
+
+		std::vector<std::string> ipv4AddrStr;
+		std::vector<std::string> ipv6AddrStr;
+		for (const auto & ipAddrItem : ipAddr)
+		{
+			if (ipAddrItem.isIPv4())
+			{
+				ipv4AddrStr.push_back(ipAddrItem.toString());
+			}
+			if (ipAddrItem.isIPv6())
+			{
+				ipv6AddrStr.push_back(ipAddrItem.toString());
+			}
+		}
+
+		std::sort(ipv4AddrStr.begin(), ipv4AddrStr.end());
+		std::sort(ipv6AddrStr.begin(), ipv6AddrStr.end());
+
+		for (const auto & ipAddrStrItem : ipv4AddrStr)
+		{
+			ipAddrStr.append(ipAddrStrItem).append(", ");
+		}
+		for (const auto & ipAddrStrItem : ipv6AddrStr)
+		{
+			ipAddrStr.append(ipAddrStrItem).append(", ");
+		}
+
+		if (!ipAddrStr.empty())
+		{
+			ipAddrStr = ipAddrStr.substr(0, ipAddrStr.length() - 2);
+		}
+
+		return ipAddrStr;
+	}
+
 	IPAddress getDevFirstSourceIPAddr(const PcapLiveDevice* dev, int ipVer)
 	{
 		IPAddress sourceIP;

@@ -18,7 +18,7 @@ namespace pcpp
 		{ "ip-version",	optional_argument, nullptr, 'p' },
 		{ "source-ip",		optional_argument, nullptr, 'S' },
 		{ "dest-ip",		optional_argument, nullptr, 'D' },
-		{ "target-ip",		required_argument, nullptr, 'T' },
+		{ "target-ip",		optional_argument, nullptr, 'T' },
 		{ "na-flags",	    optional_argument, nullptr, 'F' },
 		{ "unsolicited",	optional_argument, nullptr, 'U' },
 		{ "count",			optional_argument, nullptr, 'c' },
@@ -81,15 +81,16 @@ namespace pcpp
 	 */
 	void listInterfaces()
 	{
-		const std::vector<PcapLiveDevice*>& devList =
-		    PcapLiveDeviceList::getInstance().getPcapLiveDevicesList();
+		const std::vector<PcapLiveDevice*>& devList = PcapLiveDeviceList::getInstance().getPcapLiveDevicesList();
 
 		std::cout << std::endl << "Network interfaces:" << std::endl;
 		for (const auto& dev : devList)
 		{
-			std::cout << "    -> Name: '" << dev->getName() << "'   IP address: " << dev->getIPv4Address().toString()
-			          << std::endl;
+			std::string ipAddrStr;
+			std::cout << "    -> Name: '" << dev->getName() << "'   IP address: " << getDevIPAddrStr(ipAddrStr, dev) << std::endl;
+			ipAddrStr.clear();
 		}
+
 		exit(0);
 	}
 
@@ -132,11 +133,11 @@ namespace pcpp
 
 	void NeighAdvCmdParamIPv6Check(const NeighAdvProtoConfParams& params)
 	{
-		if (!params.sourceIP.isIPv6())
+		if ((!params.sourceIP.isZero()) && (!params.sourceIP.isIPv6()))
 		{
 			EXIT_WITH_ERROR("You must provide IPv6 source IP address to match with IP version");
 		}
-		if (!params.dstIP.isIPv6())
+		if ((!params.dstIP.isZero()) && (!params.dstIP.isIPv6()))
 		{
 			EXIT_WITH_ERROR("You must provide IPv6 destination IP address to match with IP version");
 		}
