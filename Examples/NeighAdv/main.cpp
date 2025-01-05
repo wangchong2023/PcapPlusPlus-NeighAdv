@@ -13,9 +13,8 @@
 #include <PcapLiveDevice.h>
 #include <getopt.h>
 #include <SystemUtils.h>
-#include "NeighAdvComm.h"
-#include "NeighAdvCmd.h"
 #include "NeighAdvPktBuild.h"
+#include "NeighAdvCmd.h"
 
 /**
  * main method of the application
