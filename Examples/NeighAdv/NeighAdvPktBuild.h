@@ -1,8 +1,7 @@
 #pragma once
 #include "NeighAdvComm.h"
-
-#include <IpAddress.h>
-#include <PcapLiveDevice.h>
+#include "IpAddress.h"
+#include "PcapLiveDevice.h"
 
 namespace pcpp
 {
