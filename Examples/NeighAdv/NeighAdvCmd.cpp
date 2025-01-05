@@ -20,7 +20,7 @@ namespace pcpp
 		{ "dest-ip",		optional_argument, nullptr, 'D' },
 		{ "target-ip",		required_argument, nullptr, 'T' },
 		{ "na-flags",	    optional_argument, nullptr, 'F' },
-		{ "Unsolicited",	no_argument,       nullptr, 'u' },
+		{ "Unsolicited",	no_argument,       nullptr, 'U' },
 		{ "count",			optional_argument, nullptr, 'c' },
 		{ "version",		no_argument,       nullptr, 'v' },
 		{ "list",			optional_argument, nullptr, 'l' },
