@@ -11,6 +11,7 @@ namespace pcpp
 	int NeighAdvBuildArpPacket(const MacAddress& sourceMacAddr, const MacAddress& dstMacAddr, const MacAddress& targetMacAddr,
 						const IPv4Address& senderIpAddr, const IPv4Address& targetIP, ArpOpcode arpOperCode, Packet& advPacket)
 	{
+		// Ethernet layer
 		EthLayer ethLayer(sourceMacAddr, dstMacAddr);
 		if (!advPacket.addLayer(&ethLayer))
 		{
@@ -18,6 +19,7 @@ namespace pcpp
 			return 1;
 		}
 
+		//ARP layer
 		ArpLayer arpLayer(arpOperCode, sourceMacAddr, targetMacAddr, senderIpAddr, targetIP);
 		if (!advPacket.addLayer(&arpLayer))
 		{
@@ -34,12 +36,15 @@ namespace pcpp
 			                   const IPv6Address& sourceIP, const IPv6Address& dstIP, const IPv6Address& targetIP,
 			                   const std::string& naFlagsStr, Packet& advPacket)
 	{
+		// Ethernet layer
 		EthLayer ethLayer((MacAddress(senderMacAddr)), MacAddress(dstMacAddr));
 		advPacket.addLayer(&ethLayer);
 
+		// IPv6 layer
 		auto* ipv6AdvLayer = new IPv6Layer(IPv6Address(sourceIP), IPv6Address(dstIP));
 		advPacket.addLayer(ipv6AdvLayer, true);
 
+		// NDP Neighbor Advertisement layer
 		NeighAdvNAFlags naFlags;
 		NeighAdvTranslateNAFlags(naFlagsStr, naFlags);
 		auto* ndpAdvLayer = new NDPNeighborAdvertisementLayer(
