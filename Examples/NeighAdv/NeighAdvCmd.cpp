@@ -116,6 +116,10 @@ namespace pcpp
 		{
 			EXIT_WITH_ERROR("You must provide IPv4 target IP address to match with IP version");
 		}
+		if (params.targetIP.isZero())
+		{
+			EXIT_WITH_ERROR("You must not provide IPv4 target zero IP Address");
+		}
 		if (!params.naFlagsStr.empty())
 		{
 			EXIT_WITH_ERROR("You must not provide Neighbor Advertisement flags with IP version 4");
@@ -139,6 +143,10 @@ namespace pcpp
 		if (!params.targetIP.isIPv6())
 		{
 			EXIT_WITH_ERROR("You must provide IPv6 target IP address to match with IP version");
+		}
+		if (params.targetIP.isZero())
+		{
+			EXIT_WITH_ERROR("You must not provide IPv4 target zero IP Address");
 		}
 		if (params.arpOperCode != ARP_OPER_CODE_INVALID)
 		{
