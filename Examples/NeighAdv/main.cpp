@@ -80,7 +80,7 @@ int main(const int argc, char* argv[])
 		case 'S':
 			try
 			{
-				params.sourceIP = pcpp::IPv4Address(optarg);
+				params.sourceIP = pcpp::IPAddress(optarg);
 			}
 			catch (const std::exception&)
 			{
@@ -90,7 +90,7 @@ int main(const int argc, char* argv[])
 		case 'D':
 			try
 			{
-				params.dstIP = pcpp::IPv4Address(optarg);
+				params.dstIP = pcpp::IPAddress(optarg);
 			}
 			catch (const std::exception&)
 			{
@@ -100,7 +100,7 @@ int main(const int argc, char* argv[])
 		case 'T':
 			try
 			{
-				params.targetIP = pcpp::IPv4Address(optarg);
+				params.targetIP = pcpp::IPAddress(optarg);
 			}
 			catch (const std::exception&)
 			{
