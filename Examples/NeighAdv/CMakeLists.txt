@@ -1,4 +1,4 @@
-add_executable(NeighAdv main.cpp NeighAdvComm.cpp NeighAdvPktBuild.cpp NeighAdvCmd.cpp)
+add_executable(NeighAdv main.cpp NeighAdvComm.cpp NeighAdvSendPkt.cpp NeighAdvCmd.cpp)
 
 target_link_libraries(NeighAdv PUBLIC PcapPlusPlus::Pcap++)
 

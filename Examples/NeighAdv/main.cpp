@@ -13,7 +13,7 @@
 #include <PcapLiveDevice.h>
 #include <getopt.h>
 #include <SystemUtils.h>
-#include "NeighAdvPktBuild.h"
+#include "NeighAdvSendPkt.h"
 #include "NeighAdvCmd.h"
 
 /**
@@ -152,7 +152,7 @@ int main(const int argc, char* argv[])
 	pcpp::ApplicationEventHandler::getInstance().onApplicationInterrupted(pcpp::onApplicationInterrupted, &shouldStop);
 
 	// send Neighbor Advertisement packets
-	int i = 0;
+	int i = 1;
 	while (i <= maxTries && !shouldStop)
 	{
 		NeighAdvSendPacket(dev, params);
