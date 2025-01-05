@@ -9,31 +9,31 @@
 namespace pcpp
 {
 	int NeighAdvBuildArpPacket(const MacAddress& sourceMacAddr, const MacAddress& dstMacAddr, const MacAddress& targetMacAddr,
-						const IPv4Address& senderIpAddr, const IPv4Address& targetIP, ArpOpcode opCode)
+						const IPv4Address& senderIpAddr, const IPv4Address& targetIP, ArpOpcode arpOperCode, Packet& advPacket)
 	{
 		EthLayer ethLayer(sourceMacAddr, dstMacAddr);
-		ArpLayer arpLayer(opCode, sourceMacAddr, targetMacAddr, senderIpAddr, targetIP);
-		Packet arpPacket(sizeof(ArpLayer) + sizeof(EthLayer));
+		ArpLayer arpLayer(arpOperCode, sourceMacAddr, targetMacAddr, senderIpAddr, targetIP);
 
-		if (!arpPacket.addLayer(&ethLayer))
+		if (!advPacket.addLayer(&ethLayer))
 		{
 			PCPP_LOG_ERROR("Couldn't build Eth layer for ARP packet");
 			return 1;
 		}
 
-		if (!arpPacket.addLayer(&arpLayer))
+		if (!advPacket.addLayer(&arpLayer))
 		{
 			PCPP_LOG_ERROR("Couldn't build ARP layer for ARP packet");
 			return 1;
 		}
 
-		arpPacket.computeCalculateFields();
+		advPacket.computeCalculateFields();
 
 		return 0;
 	}
 
 	int NeighAdvBuildNdpPacket(const MacAddress& senderMacAddr, const MacAddress& dstMacAddr, const MacAddress& targetMacAddr,
-	                   const IPv6Address& sourceIP, const IPv6Address& dstIP, const IPv6Address& targetIP, const std::string& naFlagsStr)
+			                   const IPv6Address& sourceIP, const IPv6Address& dstIP, const IPv6Address& targetIP,
+			                   const std::string& naFlagsStr, Packet& advPacket)
 	{
 		EthLayer ethLayer((MacAddress(senderMacAddr)), MacAddress(dstMacAddr));
 		auto* ipv6AdvLayer = new IPv6Layer(IPv6Address(sourceIP), IPv6Address(dstIP));
@@ -44,37 +44,36 @@ namespace pcpp
 										0, IPv6Address(targetIP), MacAddress(targetMacAddr),
 											 naFlags.routerFlag, naFlags.solicitedFlags, naFlags.overrideFlag);
 
-		Packet neighAdvPacket(100);
-		neighAdvPacket.addLayer(&ethLayer);
-		neighAdvPacket.addLayer(ipv6AdvLayer, true);
-		neighAdvPacket.addLayer(ndpAdvLayer, true);
-		neighAdvPacket.computeCalculateFields();
+		advPacket.addLayer(&ethLayer);
+		advPacket.addLayer(ipv6AdvLayer, true);
+		advPacket.addLayer(ndpAdvLayer, true);
+		advPacket.computeCalculateFields();
 
 		return 0;
 	}
 
-	int NeighAdvBuildPacket(const NeighAdvProtoConfParams& params)
+	int NeighAdvBuildPacket(const NeighAdvProtoConfParams& params, Packet& advPacket)
 	{
 		const IPAddress senderIP = params.unsolicited ? params.sourceIP : params.targetIP;
 		if (params.targetIP.getType() == IPAddress::IPv4AddressType)
 		{
 			return NeighAdvBuildArpPacket(params.sourceMac, params.dstMac, params.targetMac, senderIP.getIPv4(),
-			                                    params.targetIP.getIPv4(), static_cast<ArpOpcode>(params.arpOperCode));
+									      params.targetIP.getIPv4(), static_cast<ArpOpcode>(params.arpOperCode), advPacket);
 		}
 
 		return NeighAdvBuildNdpPacket(params.sourceMac, params.dstMac, params.targetMac, senderIP.getIPv6(),
-		                                    params.dstIP.getIPv6(), params.targetIP.getIPv6(), params.naFlagsStr);
+		                                    params.dstIP.getIPv6(), params.targetIP.getIPv6(), params.naFlagsStr, advPacket);
 	}
 
 	int NeighAdvSendPacket(PcapLiveDevice* dev, const NeighAdvProtoConfParams& params)
 	{
-		Packet arpPacket(100);
-		if (NeighAdvBuildPacket(params) != 0)
+		Packet advPacket(100);
+		if (NeighAdvBuildPacket(params, advPacket) != 0)
 		{
 			return 1;
 		}
 
-		if (!dev->sendPacket(&arpPacket))
+		if (!dev->sendPacket(&advPacket))
 		{
 			return 1;
 		}
