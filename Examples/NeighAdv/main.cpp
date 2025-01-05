@@ -160,5 +160,5 @@ int main(const int argc, char* argv[])
 	}
 
 	// close device
-	//dev->close();
+	dev->close();
 }

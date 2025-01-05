@@ -13,7 +13,7 @@ namespace pcpp
 	{
 		// Ethernet layer
 		EthLayer ethLayer(sourceMacAddr, dstMacAddr);
-		if (!advPacket.addLayer(&ethLayer))
+		if (!advPacket.addLayer(&ethLayer, true))
 		{
 			PCPP_LOG_ERROR("Couldn't build Eth layer for ARP packet");
 			return 1;
@@ -21,7 +21,7 @@ namespace pcpp
 
 		//ARP layer
 		ArpLayer arpLayer(arpOperCode, sourceMacAddr, targetMacAddr, senderIpAddr, targetIP);
-		if (!advPacket.addLayer(&arpLayer))
+		if (!advPacket.addLayer(&arpLayer, true))
 		{
 			PCPP_LOG_ERROR("Couldn't build ARP layer for ARP packet");
 			return 1;
