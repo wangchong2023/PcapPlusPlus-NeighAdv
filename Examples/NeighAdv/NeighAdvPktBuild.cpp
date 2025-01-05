@@ -12,14 +12,13 @@ namespace pcpp
 						const IPv4Address& senderIpAddr, const IPv4Address& targetIP, ArpOpcode arpOperCode, Packet& advPacket)
 	{
 		EthLayer ethLayer(sourceMacAddr, dstMacAddr);
-		ArpLayer arpLayer(arpOperCode, sourceMacAddr, targetMacAddr, senderIpAddr, targetIP);
-
 		if (!advPacket.addLayer(&ethLayer))
 		{
 			PCPP_LOG_ERROR("Couldn't build Eth layer for ARP packet");
 			return 1;
 		}
 
+		ArpLayer arpLayer(arpOperCode, sourceMacAddr, targetMacAddr, senderIpAddr, targetIP);
 		if (!advPacket.addLayer(&arpLayer))
 		{
 			PCPP_LOG_ERROR("Couldn't build ARP layer for ARP packet");
@@ -36,17 +35,18 @@ namespace pcpp
 			                   const std::string& naFlagsStr, Packet& advPacket)
 	{
 		EthLayer ethLayer((MacAddress(senderMacAddr)), MacAddress(dstMacAddr));
+		advPacket.addLayer(&ethLayer);
+
 		auto* ipv6AdvLayer = new IPv6Layer(IPv6Address(sourceIP), IPv6Address(dstIP));
+		advPacket.addLayer(ipv6AdvLayer, true);
 
 		NeighAdvNAFlags naFlags;
 		NeighAdvTranslateNAFlags(naFlagsStr, naFlags);
 		auto* ndpAdvLayer = new NDPNeighborAdvertisementLayer(
 										0, IPv6Address(targetIP), MacAddress(targetMacAddr),
 											 naFlags.routerFlag, naFlags.solicitedFlags, naFlags.overrideFlag);
-
-		advPacket.addLayer(&ethLayer);
-		advPacket.addLayer(ipv6AdvLayer, true);
 		advPacket.addLayer(ndpAdvLayer, true);
+
 		advPacket.computeCalculateFields();
 
 		return 0;
