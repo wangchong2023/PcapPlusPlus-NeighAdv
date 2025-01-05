@@ -5,7 +5,6 @@
 #include "IPv6layer.h"
 #include "NDPlayer.h"
 #include "NeighAdvPktBuild.h"
-#include "NeighAdvComm.h"
 
 namespace pcpp
 {
