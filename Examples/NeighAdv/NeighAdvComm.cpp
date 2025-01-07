@@ -2,6 +2,8 @@
 #include "NeighAdvComm.h"
 #include "NeighAdvCmd.h"
 
+#include <set>
+
 namespace pcpp
 {
 	PcapLiveDevice* getDevByIfNameOrIP(const std::string& ifaceNameOrIP)
@@ -33,42 +35,32 @@ namespace pcpp
 		return sourceMac;
 	}
 
-	std::string& getDevIPAddrStr(std::string& ipAddrStr, const PcapLiveDevice* dev)
-	{
-		const std::vector<IPAddress> ipAddr =  dev->getIPAddresses();
-		if (ipAddr.empty())
-		{
+	std::string& getDevIPAddrStr(std::string& ipAddrStr, const PcapLiveDevice* dev) {
+		const std::vector<IPAddress> ipAddr = dev->getIPAddresses();
+		if (ipAddr.empty()) {
 			return ipAddrStr;
 		}
 
-		std::vector<std::string> ipv4AddrStr;
-		std::vector<std::string> ipv6AddrStr;
-		for (const auto & ipAddrItem : ipAddr)
-		{
-			if (ipAddrItem.isIPv4())
-			{
-				ipv4AddrStr.push_back(ipAddrItem.toString());
+		std::set<std::string> ipv4AddrSet;
+		std::set<std::string> ipv6AddrSet;
+		for (const auto & ipAddrItem : ipAddr) {
+			if (ipAddrItem.isIPv4()) {
+				ipv4AddrSet.insert(ipAddrItem.toString());
 			}
-			if (ipAddrItem.isIPv6())
-			{
-				ipv6AddrStr.push_back(ipAddrItem.toString());
+			if (ipAddrItem.isIPv6()) {
+				ipv6AddrSet.insert(ipAddrItem.toString());
 			}
 		}
 
-		std::sort(ipv4AddrStr.begin(), ipv4AddrStr.end());
-		std::sort(ipv6AddrStr.begin(), ipv6AddrStr.end());
-
-		for (const auto & ipAddrStrItem : ipv4AddrStr)
-		{
+		for (const auto & ipAddrStrItem : ipv4AddrSet) {
 			ipAddrStr.append(ipAddrStrItem).append(", ");
 		}
-		for (const auto & ipAddrStrItem : ipv6AddrStr)
-		{
+		for (const auto & ipAddrStrItem : ipv6AddrSet) {
 			ipAddrStr.append(ipAddrStrItem).append(", ");
 		}
 
-		if (!ipAddrStr.empty())
-		{
+		//去掉最后一个多余的", "
+		if (!ipAddrStr.empty()) {
 			ipAddrStr = ipAddrStr.substr(0, ipAddrStr.length() - 2);
 		}
 
